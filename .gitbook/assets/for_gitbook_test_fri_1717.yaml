@@ -1,0 +1,783 @@
+openapi: 3.0.1
+info:
+  title: Mythical Platform Server API
+  version: 1.0.1.1674
+  description: >
+
+    This is the Mythical Game Services API Reference.<br><br>
+
+    The endpoints are organized into 8 sections in the order that you would normally use them to build up a new game environment:<br>
+      <ul>
+      <li>1. Item classes. An item class is required for an item.</li>
+      <li>2. Items. An item is used to create player items.</li>
+      <li>3. Item tokens. An item token defines the ERC-721 contract on the blockchain.</li>
+      <li>4. Item token metadata. Metadata conforms to the OpenSea format.</li>
+      <li>5. Players. A player can be a Mythical player (verified email) or a studio player (anonymous, created when a player first plays a game).</li>
+      <li>5b. Account linking
+      <li>6. Player custom data. </li>
+      <li>7. Player items. Created when items are granted to a player.</li>
+      <li>7e. Player currency. </li>
+      <li>8. Player items custom data.</li></ul>
+    <p>Each endpoint has an example request/response. You can build your own basic game environment by doing the example for the first endpoint in each of the 8 sections. <br><br>
+    2023.0714.0655
+
+
+tags:
+  - name: 1 Item Classes
+    description: An item class is used to group items together. Every item requires an item class. For a basic environment, only POST /item-classes is required.
+  - name: 2 Items
+    description: An item is basically a template for player items. For a basic environment, only POST /items is required.
+  - name: 3 Item Tokens
+    description: A token defines the ERC-720 contract for the item on the Mythical blockchain. For a basic environment, only POST /item-tokens is required.
+  - name: 4 Item Token Metadata
+    description: Token metadata can be modified. For a basic environment, only POST /item-token-metatdata is required.
+  - name: 5 Players
+    description: A player has a Mythical blockchain custodial wallet and can own NFTs. For a basic environment, only POST /players is required.
+  - name: 5b Account linking
+    description: Link accounts.
+  - name: 6 Players Custom Data
+    description: Custom data for a player. For a basic environment, only PUT custom-data-players is required.
+  - name: 7 Player Items
+    description: Minted items that belong to a player. For a basic environment, only POST player-items/grant is required.
+#  - name: 7b Player Items
+#    description: Various secondary endpoints for player items.
+  - name: 7e Player currency
+    description: xxxx.
+  - name: 8 Player Items Custom Data
+    description: Custom data for player items. For a basic environment, only PUT custom-data-player-items is required.
+paths:
+  /item-classes:
+    post: #TT 01 0707
+      summary: item-classes
+      description: >-
+        Create an item class. Every item requires an item class. Item class is used to group items together.
+      tags:
+        - 1 Item Classes
+      operationId: CreateItemClass
+      parameters:
+        - name: x-game-environment-id
+          in: header
+          description: Tenant (Title Environment) ID.
+          style: simple
+          schema:
+            type: string
+            example: 11112222-3333-4444-5555-666677778888
+
+      requestBody: #TT 0707
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateItemClassRequest' 
+            example: 
+              { 
+                "itemClass": "itemClass0706",
+                "description": "itemClass0706 descr",
+                "customData": {
+                   "itemClass0706Key1": {
+                      "data": "{\"itemClass0706Key1Param1\": 11, \"itemClass0706Key1Param2\": \"String12\"}",
+                      "gameVersionId": "292d6d0f-e689-4aef-ae52-6e632a229098"},
+                   "itemClass0706Key2": {
+                      "data": "{\"itemClass0706Key2Param1\": 21, \"itemClass0706Key2Param2\": \"String22\"}",
+                      "gameVersionId": "292d6d0f-e689-4aef-ae52-6e632a229098" } } }
+
+      responses: #TT 0707
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemClassResult'
+              example:
+                { "id": "02146ddf-0661-40c4-b019-b58167ecb984",
+                  "itemClass": "itemClass0706",
+                  "description": "itemClass0706 descr",
+                  "customData": {
+                    "itemClass0706Key1": "{\"itemClass0706Key1Param1\": 11, \"itemClass0706Key1Param2\": \"String12\"}",
+                    "itemClass0706Key2": "{\"itemClass0706Key2Param1\": 21, \"itemClass0706Key2Param2\": \"String22\"}" } }
+
+
+ 
+  /item-classes/{itemClassId}:
+    put: #TT 02
+      summary: item-classes/{itemClassId}
+      description: Modify the item class.
+      tags:
+        - 1 Item Classes
+      operationId: UpdateItemClass
+      
+      parameters:
+        - name: itemClassId
+          in: path
+          required: true
+          style: simple
+          description: Item class ID.
+          example: a149dd33-0a13-48d8-83ed-b143e793aceb
+          schema:
+            type: string
+      
+      
+        - name: x-game-environment-id
+          in: header
+          description: Tenant (Title Environment) ID.
+          style: simple
+          schema:
+            type: string
+            example: 11112222-3333-4444-5555-666677778888
+ 
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateItemClassRequest'
+            example:
+              { "itemClass": "envItemClass0626XYZ",
+                "description": "envItemClass0626XYZ descr",
+                "customData": {
+                   "player0306Key1": {
+                      "data": "{\"ItemClassParam1\": 111, \"ItemClassParam2\": \"String111XYZ\" }",
+                      "gameVersionId": "292d6d0f-e689-4aef-ae52-6e632a229098" },
+                   "player0306Key3": {
+                      "data": "{\"ItemClassParam3\": 333, \"ItemClassParam4\": \"String444\" }",
+                      "gameVersionId": "292d6d0f-e689-4aef-ae52-6e632a229098" } } }
+ 
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemClassResult'
+              example:
+                { "id": "a149dd33-0a13-48d8-83ed-b143e793aceb",
+                  "itemClass": "envItemClass0626XYZ",
+                  "description": "envItemClass0626XYZ descr",
+                  "customData": {
+                    "player0306Key1": "{\"ItemClassParam1\": 111, \"ItemClassParam2\": \"String111XYZ4\"}",
+                    "player0306Key3": "{\"ItemClassParam3\": 333, \"ItemClassParam4\": \"String444\"}"   } }
+
+              
+  /items:
+    post: #TT 03 0707
+      summary: items
+      description: >-
+        Create an item (type) with an assigned item class. Whenever an item is granted or bought, a player item is created.
+      tags:
+        - 2 Items
+      operationId: CreateItem
+      parameters:
+        - name: x-game-environment-id
+          in: header
+          description: Tenant (Title Environment) ID.
+          style: simple
+          schema:
+            type: string
+            example: 11112222-3333-4444-5555-666677778888
+            
+
+      requestBody: #TT 0707
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateItemRequest'
+            example:
+              { "itemName": "item0706",
+                "displayName": "item0706DisplayName",
+                "minGameVersion": "292d6d0f-e689-4aef-ae52-6e632a229098",
+                "itemClassId": "20ad7bd4-b67a-4feb-abc9-5c0c6861f485",
+                "externalId": "item0706ExtId",
+                "tags": [     "item0706Tag1"   ],
+                "consumable": "true",
+                "consumableUsageCount": 0,
+                "consumableTimespan": 0,
+                "imageUrl":  null,
+                "customData": {
+                  "item0706CDKey1": {
+                    "data": "{\"item0706CDKey1Param1\": 111, \"item0706CDKey1Param2\": \"String112\" }",
+                    "gameVersionId": "292d6d0f-e689-4aef-ae52-6e632a229098",
+                    "ownerPermission": "3",
+                    "othersPermission": "3"     },
+                  "item0706CDKey2": {
+                    "data": "{\"item0706CDKey2Param1\": 211, \"item0706CDKey2Param2\": \"String212\" }",
+                    "gameVersionId": "292d6d0f-e689-4aef-ae52-6e632a229098",
+                    "ownerPermission": "3",
+                    "othersPermission": "3"     },
+                  "ChainMetadata": {
+                    "data": "{\"item0706CDCMParam1\": 311, \"item0706CDCMParam2\": \"String312\" }",
+                    "gameVersionId": "292d6d0f-e689-4aef-ae52-6e632a229098",
+                    "ownerPermission": "3",
+                    "othersPermission": "3"     }  }}
+
+
+
+      responses: #TT 0707
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemResult'
+              example:
+                { "id": "2e4046ea-20fa-4bf9-8c28-0e0927f40fda",
+                  "itemName": "item0706",
+                  "displayName": "item0706DisplayName",
+                  "externalId": "item0706ExtId",
+                  "minGameVersion": "292d6d0f-e689-4aef-ae52-6e632a229098",
+                  "itemClassId": "20ad7bd4-b67a-4feb-abc9-5c0c6861f485",
+                  "consumable": true,
+                  "consumableUsageCount": 0,
+                  "consumableTimespan": 0,
+                  "imageUrl": ,
+                  "customData": {
+                    "item0706CDKey1": "{\"item0706CDKey1Param1\": 111, \"item0706CDKey1Param2\": \"String112\"}",
+                    "item0706CDKey2": "{\"item0706CDKey2Param1\": 211, \"item0706CDKey2Param2\": \"String212\"}",
+                    "chainMetadata": "{\"item0706CDCMParam1\": 311, \"item0706CDCMParam2\": \"String312\"}"   }}
+
+
+                
+  /items/{itemId}:
+    get: #TT 04 0626
+      summary: items/{itemId}
+      description: Get the specified item.
+      tags:
+        - 2 Items
+      operationId: GetItem
+
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          example: 863d8459-ef95-48fa-bc15-e89ed9b4eedd
+          description: Item ID.
+          style: simple
+          schema:
+            type: string
+
+        - name: x-game-environment-id
+          in: header
+          description: Tenant (Title Environment) ID.
+          style: simple
+          schema:
+            type: string
+            example: 11112222-3333-4444-5555-666677778888
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemResult'
+              example:
+                { "id": "863d8459-ef95-48fa-bc15-e89ed9b4eedd",
+                  "itemName": "item0623A",
+                  "displayName": "item0623DnameA",
+                  "externalId": "item0623ExtIdA",
+                  "minGameVersion": "292d6d0f-e689-4aef-ae52-6e632a229098",
+                  "itemClassId": "00e17b1a-82c1-4305-b44c-ee1a0dc3780d",
+                  "consumable": false,
+                  "consumableUsageCount": 0,
+                  "consumableTimespan": 0,
+                  "imageUrl": ,
+                  "customData": {
+                    "item0623Key1": "{
+                      \"age\": 23, 
+                      \"firstName\": \"firstName0623\", 
+                      \"lastName\": \"lastName0623\"}",
+                    "chainMetadata": "{
+                      \"traittype0623_1\": \"6231\", 
+                      \"traittype0623_2\": \"6232\" }"  }}
+            
+    put: #TT 05 0626
+      summary: items/{itemId}
+      description: Modify the specified item.
+      tags:
+        - 2 Items
+      operationId: UpdateItem
+      
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          description: Item ID.
+          example: 863d8459-ef95-48fa-bc15-e89ed9b4eedd
+          style: simple
+          schema:
+            type: string
+
+            
+        - name: x-game-environment-id
+          in: header
+          description: Tenant (Title Environment) ID.
+          style: simple
+          schema:
+            type: string
+            example: 11112222-3333-4444-5555-666677778888
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateItemRequest'
+            example:
+              { "itemName": "item0623B",
+                "displayName": "item0623DnameB",
+                "externalId": "item0623ExtIdB",
+                "minGameVersion": "292d6d0f-e689-4aef-ae52-6e632a229098",
+                "itemClassId": "00e17b1a-82c1-4305-b44c-ee1a0dc3780d",
+                "consumable": "false",
+                "consumableUsageCount": 0,
+                "consumableTimespan": 0,
+                "imageUrl": null,  
+                "customData": {
+                  "item0623KeyB": {
+                    "data": "{
+                      \"age\": 22, 
+                      \"firstName\": \"firstName0623B\", 
+                      \"lastName\": \"lastName0623B\"}",
+                    "gameVersionId": "292d6d0f-e689-4aef-ae52-6e632a229098",
+                    "ownerPermission": "3",
+                    "othersPermission": "3" },
+                  "ChainMetadata": {
+                    "data": "{
+                      \"traittype0623_1B\": \"62310\", 
+                      \"traittype0623_2B\": \"62320\"}",
+                    "gameVersionId": "292d6d0f-e689-4aef-ae52-6e632a229098",
+                    "ownerPermission": "3",
+                    "othersPermission": "3"      }}}
+            
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemResult'
+              example:
+                { "id": "863d8459-ef95-48fa-bc15-e89ed9b4eedd",
+                  "itemName": "item0623B",
+                  "displayName": "item0623DnameB",
+                  "externalId": "item0623ExtIdB",
+                  "minGameVersion": "292d6d0f-e689-4aef-ae52-6e632a229098",
+                  "itemClassId": "00e17b1a-82c1-4305-b44c-ee1a0dc3780d",
+                  "consumable": false,
+                  "consumableUsageCount": 0,
+                  "consumableTimespan": 0,
+                  "imageUrl": ,
+                  "customData": {
+                    "item0623KeyB": "{
+                      \"age\": 22, 
+                      \"firstName\": \"firstName0623B\", 
+                      \"lastName\": \"lastName0623B\"}",
+                    "chainMetadata": "{
+                      \"traittype0623_1B\": \"62310\",  
+                      \"traittype0623_2B\": \"62320\"  } "  } }
+              
+
+                
+ 
+components: ############################################################################
+            ############################################################################
+            ############################################################################
+            ############################################################################
+            ############################################################################
+  schemas:
+  
+  
+# 1 Item classes =======================================================
+
+# 01 POST /item-classes
+  
+    CreateItemClassRequest: #TT 0711
+      required:
+        - itemClass
+      type: object
+      description: Object that defines item class to create.
+      properties:
+        itemClass:
+          minLength: 1
+          type: string
+          example: itemClass0706
+          nullable: true
+          description: Item class name.
+        description:
+          type: string
+          example: itemClass0706 description
+          nullable: true
+          description: Item class description.
+        customData:
+          type: object
+          example: #TT 0711example
+            { item0706CDKey1: (key1Definition),
+              item0706CDKey2: (key2Definition) } 
+          description: >-
+            Defines custom data (multiple keys). Custom data can be used to store in-game data.
+          additionalProperties:
+            $ref: '#/components/schemas/KeyedCustomDataWithPermission'
+          nullable: true
+      additionalProperties: false
+
+# TT 0712 
+# KeyedCustomDataWithPermission is used for all of these
+#    1 ItemClass
+#    2a Item
+#    2b Item bulk
+#    5 player
+#    8 PlayerItem
+# The problem is that only the following have ChainMetadata
+#    2a Item (CMD should not be used, so no example)
+#    8 PlayerItem (uses ChainMetadata to modify metadata attributes)
+# So its not really possible in the KeyedCustomDataWithPermission part schema to make much of an example.
+
+    KeyedCustomDataWithPermission: #TT 0711
+      required:
+        - gameVersionId
+      type: object
+      example: item0706CDKey1
+      description: Object that defines a custom data key (that contains the data string that defines the customData parameter/value pairs).
+      properties:
+        data:
+          type: string
+          nullable: true
+          description: Custom data string that defines parameter/value pairs.
+          example: 
+            "data": "{ \"itemClass0706Key1Param1\": 11, \"itemClass0706Key1Param2\": \"String12\" }"
+#            age: 55
+#            firstName: envPlayer1Key1NameFirst
+#            lastName: envPlayer1Key1NameLast
+        gameVersionId:
+          type: string
+          format: uuid
+          description: Game version ID.
+          example: 292d6d0f-e689-4aef-ae52-6e632a119098
+        schemaId:
+          type: string
+          format: uuid
+          nullable: true
+          description: Schema ID.
+          example: dbe296d5-4c8e-4f81-89e2-d633deb84658
+        ownerPermission:
+          $ref: '#/components/schemas/CustomDataPermission'
+        othersPermission:
+          $ref: '#/components/schemas/CustomDataPermission'
+      additionalProperties: false
+
+
+    CustomDataPermission: #TT 0711
+      enum:
+        - 1
+        - 2
+        - 3
+      type: string
+      description: Custom data permission enumeration. Used for customData (keys and ChainMetadata). 1 = None, 2 = Read, 3 = Write.
+      example: 3 (write, the most common value)
+
+
+
+# 02 PUT /item-classes/{itemClassId}      
+
+    UpdateItemClassRequest: #TT 0711
+      required:
+        - itemClass
+      type: object
+      description: Object that contains request to update item class specified in path.
+      properties:
+        itemClass:
+          minLength: 1
+          example: itemClass0706
+          type: string
+          description: Item class name.
+        description:
+          type: string
+          nullable: true
+          example: itemClass0706 description
+          description: Item class description.
+        customData:
+          type: object
+          example: #TT 0711example
+            { item0706CDKey1: (key1Definition),
+              item0706CDKey2: (key2Definition) } 
+          description: >-
+            Defines custom data (multiple keys). Custom data can be used to store in-game data.
+          additionalProperties:
+            $ref: '#/components/schemas/KeyedCustomDataWithPermission'
+          nullable: true
+      additionalProperties: false
+
+# 01,02 shared 
+
+    ItemClassResult: #TT 0711
+      type: object
+      description: Object that contains the create item class result.
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Item class ID.
+        itemClass:
+          type: string
+          example: itemClass0706
+          nullable: true
+          description: Item class name.
+        description:
+          type: string
+          example: itemClass0706 description
+          nullable: true
+          description: Item class description.
+        customData:
+          type: object
+          example: #TT 0711example
+            { item0706CDKey1: (key1Definition),
+              item0706CDKey2: (key2Definition) } 
+          additionalProperties:
+            type: string
+          nullable: true
+          description: >-
+            Item class custom data (multiple keys).
+            Custom data can be used to store in-game
+            data about an item.
+      additionalProperties: false
+
+  
+
+# 2a Items ====================================================
+
+# 03 POST /items
+
+    CreateItemRequest:
+      required:
+        - displayName
+        - itemClassId
+        - itemName
+        - minGameVersion
+      type: object
+      description: Request to create item.
+      properties:
+        itemName:
+          minLength: 1
+          type: string
+          example: item0706
+          description: Item name.
+        displayName:
+          minLength: 1
+          example: item0706DisplayName  
+          type: string
+          description: Item display name (shown in the marketplace).
+        minGameVersion:
+          type: string
+          format: uuid
+          example: 292d6d0f-e689-4aef-ae52-6e632a229098
+          description: Minimum game version.
+        itemClassId:
+          type: string
+          example: 20ad7bd4-b67a-4feb-abc9-5c0c6861f485
+          format: uuid
+          description: Item class ID.
+        externalId:
+          type: string
+          example: item0706ExtId
+          nullable: true
+          description: Item external ID.
+        tags:
+          type: array
+          example: [ item0706Tag1 ]
+          items:
+            type: string
+          nullable: true
+          description: Array of tags associated with item.
+        consumable:
+          type: boolean
+          description: >-
+            True = consumable. For example a potion in a game. After used
+            consumableUsageCount times, it is gone.
+        consumableUsageCount:
+          type: integer
+          format: int64
+          description: How many times consumable item can be consumed.
+        consumableTimespan:
+          type: integer
+          example: 50000
+          format: int64
+          description: Minimum interval between consumptions of an item.
+        imageUrl:
+          type: string
+          example: https://gs-assets.company.dev/Assets%2F9bb7a101-8e1a-48a0-80ac-2ae67211aabd-0323pic.png
+          nullable: true
+          description: Item image (can be used for non-tokenized items).
+        customData:
+          type: object
+          # NOTE: This is also used for item. Item should not use chainMetadata also (not needed).   
+          example: #TT 0711example
+            { item0706CDKey1: (key1Definition),
+              item0706CDKey2: (key2Definition) } 
+          description: >-
+            Defines custom data (multiple keys). Custom data can be used to store in-game data.
+          additionalProperties:
+            $ref: '#/components/schemas/KeyedCustomDataWithPermission' #TT see itemClass
+          nullable: true
+      additionalProperties: false
+
+# 03, 04 GET /items/{itemId}
+# 07 GET /items/external/{externalId}
+# 05 PUT /items/{itemId}
+# 08 PUT /items/external/{externalId}
+
+    ItemResult:
+      type: object
+      description: Created item.
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Item ID (UUID).
+        itemName:
+          type: string
+          nullable: true
+          example: item0706
+          description: Item name.
+        displayName:
+          type: string
+          nullable: true
+          example: item0706DisplayName  
+          description: Item display name (shown in the marketplace).
+        externalId:
+          type: string
+          nullable: true
+          example: item0706ExtId
+          description: Item external ID.
+        minGameVersion:
+          type: string
+          example: 292d6d0f-e689-4aef-ae52-6e632a229098
+          format: uuid
+          description: Minimum game version.
+        itemClassId:
+          type: string
+          example: 20ad7bd4-b67a-4feb-abc9-5c0c6861f485
+          format: uuid
+          description: Item class ID.
+        consumable:
+          type: boolean
+          description: >-
+            True = consumable. For example a potion in a game. After used
+            consumableUsageCount times, it is gone.
+        consumableUsageCount:
+          type: integer
+          format: int64
+          description: How many times consumable item can be consumed.
+        consumableTimespan:
+          type: integer
+          example: 50000
+          format: int64
+          description: Minimum interval between consumption of an item.
+        imageUrl:
+          type: string
+          example: https://gs-assets.company.dev/Assets%2F9bb7a101-8e1a-48a0-80ac-2ae67211aabd-0323pic.png
+          nullable: true
+          description: Item image (can be used for non-tokenized items).
+        customData:
+          type: object
+          example: #TT 0711example
+            { item0706CDKey1: (key1Definition),
+              item0706CDKey2: (key2Definition) } 
+          additionalProperties:
+            type: string
+          nullable: true
+          description: >-
+            Defines custom data (multiple keys). Custom data can be used to store in-game data.
+      additionalProperties: false
+  
+# 05 PUT /items/{itemId}
+  
+    UpdateItemRequest:
+      type: object
+      description: Request to update item.
+      properties:
+        itemName:
+          type: string
+          nullable: true
+          example: item0706
+          description: Item name.
+        displayName:
+          type: string
+          nullable: true
+          example: item0706DisplayName  
+          description: Item display name (shown in the marketplace).
+        minGameVersion:
+          type: string
+          format: uuid
+          example: 292d6d0f-e689-4aef-ae52-6e632a229098
+          description: Minimum game version.
+        itemClassId:
+          type: string
+          format: uuid
+          example: 20ad7bd4-b67a-4feb-abc9-5c0c6861f485
+          description: Item class ID.
+        externalId:
+          type: string
+          nullable: true
+          example: item0706ExtId
+          description: Item external ID.
+        tags:
+          type: array
+          example: [ item0706Tag1 ]
+          items:
+            type: string
+          nullable: true
+          description: Array of tags associated with item.
+        consumable:
+          type: boolean
+          description: >-
+            True = consumable. For example a potion in a game. After used
+            consumableUsageCount times, it is gone.
+        consumableUsageCount:
+          type: integer
+          format: int64
+          description: How many times consumable item can be consumed.
+        consumableTimespan:
+          type: integer
+          example: 50000
+          format: int64
+          description: Minimum interval between consumptions of an item.
+        imageUrl:
+          type: string
+          example: https://gs-assets.company.dev/Assets%2F9bb7a101-8e1a-48a0-80ac-2ae67211aabd-0323pic.png
+          nullable: true
+          description: Item image (can be used for non-tokenized items).
+        customData:
+          type: object
+          example: #TT 0711example
+            { item0706CDKey1: (key1Definition),
+              item0706CDKey2: (key2Definition) } 
+          description: >-
+             Defines custom data (multiple keys). Custom data can be used to store in-game data
+          additionalProperties:
+            $ref: '#/components/schemas/KeyedCustomDataWithPermission' #TT see itemClass
+          nullable: true
+      additionalProperties: false
+
+
+# 06 DELETE /items/{itemId}
+# 09 /items/external/{externalId}
+
+    DeleteResult:
+      type: object
+#      example: "Success" #TT 0711 
+      additionalProperties: false
+      description: Object that contains the result of the item delete.
+      
+  
+
+
+
+# =========================================================================  
+
+  securitySchemes:
+    OAuth:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://auth-internal.mythicalgames.com//oauth2/authorize
+          tokenUrl: https://auth-internal.mythicalgames.com//oauth2/token
+          scopes: {}
+security:
+  - OAuth: []
+
